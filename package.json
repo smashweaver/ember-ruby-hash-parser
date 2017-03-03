@@ -11,7 +11,7 @@
     "doc": "doc",
     "test": "tests"
   },
-  "repository": "",
+  "repository": "https://github.com/smashweaver/ember-ruby-hash-parser.git",
   "scripts": {
     "build": "ember build",
     "start": "ember server",
