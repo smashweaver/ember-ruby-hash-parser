@@ -1,6 +1,7 @@
-import {
-  Scanner
-} from './scanner';
+import Ember from 'ember';
+import { Scanner } from './scanner';
+
+const { Logger } = Ember;
 
 class NIL {
   constructor(scanner) {
@@ -22,7 +23,7 @@ class NIL {
   }
 
   parse() {
-    console.log('parsing nil!');
+    Logger.log('parsing nil!');
     let scanner = this._scanner;
     let token = scanner.scan('NIL');
 
@@ -30,7 +31,7 @@ class NIL {
       this._value = token[1];
       this._found = true;
     }
-    console.log('exiting nil!', this._value);
+    Logger.log('exiting nil!', this._value);
   }
 }
 
@@ -55,8 +56,10 @@ class STRING {
   }
 
   parse() {
-    console.log('parsing string!');
-    let found = false, error = null, value = '';
+    Logger.log('parsing string!');
+    let found = false;
+    let error = null;
+    let value = '';
     let scanner = this._scanner;
     let token = scanner.scan('DQUOTE');
 
@@ -83,7 +86,7 @@ class STRING {
     found = this.match();
     value = this.content();
     error = this.error();
-    console.log(`exiting string!`, { found, value, error});
+    Logger.log('exiting string!', { found, value, error });
   }
 }
 
@@ -108,9 +111,11 @@ class VALUE {
   }
 
   parse() {
-    console.log('parsing value!');
+    Logger.log('parsing value!');
     let scanner = this._scanner;
-    let found = false, error = null, value = null;
+    let found = false;
+    let error = null;
+    let value = null;
 
     // scan for nil
     let nt = new NIL(scanner);
@@ -131,7 +136,7 @@ class VALUE {
 
     // scan for rh
     if (!error && !found) {
-      if (scanner.scan('LBRACKET', true)){
+      if (scanner.scan('LBRACKET', true)) {
         nt = new RH(scanner);
         nt.parse();
         found = nt.match();
@@ -152,7 +157,7 @@ class VALUE {
     found = this.match();
     value = this.content();
     error = this.error();
-    console.log('exiting value!', { found, value, error });
+    Logger.log('exiting value!', { found, value, error });
   }
 }
 
@@ -178,8 +183,11 @@ class KV {
   }
 
   parse() {
-    console.log('parsing kv!');
-    let key = null, value = null, error = null, found = false;
+    Logger.log('parsing kv!');
+    let key = null;
+    let value = null;
+    let error = null;
+    let found = false;
     let scanner = this._scanner;
     let token = scanner.scan('SYMBOL');
 
@@ -211,7 +219,7 @@ class KV {
     found = this.match();
     value = this.content();
     error = this.error();
-    console.log('exiting kv!', { found, value, error });
+    Logger.log('exiting kv!', { found, value, error });
   }
 }
 
@@ -240,8 +248,11 @@ class EXP {
   }
 
   parse() {
-    console.log('parsing exp!');
-    let done = false, found = false, error = null, value = [];
+    Logger.log('parsing exp!');
+    let done = false;
+    let found = false;
+    let error = null;
+    let value = [];
     let scanner = this._scanner;
 
     while (!done) {
@@ -273,7 +284,7 @@ class EXP {
     value = this.content();
     found = this.match();
     error = this.error();
-    console.log('exiting exp!', { found, value, error });
+    Logger.log('exiting exp!', { found, value, error });
   }
 }
 
@@ -298,8 +309,10 @@ class RH {
   }
 
   parse() {
-    console.log('parsing rh!');
-    let error = null, value = null, found = false;
+    Logger.log('parsing rh!');
+    let error = null;
+    let value = null;
+    let found = false;
     let scanner = this._scanner;
 
     let token = scanner.scan('LBRACKET');
@@ -330,13 +343,13 @@ class RH {
     found = this.match();
     value = this.content();
     error = this.error();
-    console.log('exiting rh!', { found, value, error });
+    Logger.log('exiting rh!', { found, value, error });
   }
 }
 
 class Parser {
   parse(stream) {
-    console.log(`*** stream ***`, stream);
+    Logger.log('*** stream ***', stream);
     let scanner = new Scanner(stream);
     let rh = new RH(scanner);
     rh.parse();
